@@ -13,87 +13,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  # =========================================================================
-  # STAGE 1: Fast Smoke Quality Gate (Fail-Fast within 60 seconds)
-  # =========================================================================
-  smoke-quality-gate:
-    name: "Gate 1: Fast Smoke & Connectivity SLA"
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "npm"
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Install Playwright Browsers (Chromium Only)
-        run: npx playwright install --with-deps chromium
-
-      - name: Start SUT Containers (Postgres + Target API)
-        run: |
-          docker compose up -d postgres target-api
-          echo "Waiting for Target SUT API to become healthy..."
-          curl --retry 20 --retry-delay 2 --retry-connrefused http://127.0.0.1:5000/health
-          docker compose ps
-
-      - name: Execute Fast Smoke Gate
-        run: npx playwright test tests/smoke/platform-connectivity.spec.ts --reporter=list
-
-  # =========================================================================
-  # STAGE 2: API Contract & Database Invariant Gate
-  # =========================================================================
-  api-database-gate:
-    name: "Gate 2: API Contract & DB Invariant Validation"
-    needs: smoke-quality-gate
-    runs-on: ubuntu-latest
-    timeout-minutes: 8
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "npm"
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Install Playwright Browsers (Chromium Only)
-        run: npx playwright install --with-deps chromium
-
-      - name: Start SUT Containers
-        run: |
-          docker compose up -d postgres target-api
-          echo "Waiting for Target SUT API..."
-          curl --retry 20 --retry-delay 2 --retry-connrefused http://127.0.0.1:5000/health
-          docker compose ps
-
-      - name: Execute API & Database Test Suites
-        run: |
-          npx playwright test tests/api tests/database --reporter=list
-
-      - name: Ingest Test Metrics to PostgreSQL Warehouse
-        if: always()
-        run: |
-          npm run metrics:ingest || true
-
-  # =========================================================================
-  # STAGE 3: UI End-to-End User Experience Gate
-  # =========================================================================
-  ui-e2e-gate:
-    name: "Gate 3: UI E2E User Journey & POM Validation"
-    needs: smoke-quality-gate
+  quality-gates-pipeline:
+    name: "Enterprise Multi-Layer Quality Gates"
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -110,12 +31,58 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers (Chromium Only)
+      - name: Install Playwright Browsers (Chromium)
         run: npx playwright install --with-deps chromium
 
-      - name: Execute UI E2E Journey Tests
+      - name: Start SUT Docker Services (PostgreSQL + REST API)
         run: |
-          npx playwright test tests/ui --reporter=list
+          docker compose up -d --build postgres target-api
+          echo "Waiting for SUT services to become healthy..."
+          for i in $(seq 1 30); do
+            if curl -s http://127.0.0.1:5000/health | grep -q "healthy"; then
+              echo "✅ SUT API is healthy on port 5000!"
+              break
+            fi
+            echo "Waiting for SUT API ($i/30)..."
+            sleep 2
+          done
+          docker compose ps
+          if ! curl -s http://127.0.0.1:5000/health | grep -q "healthy"; then
+            echo "❌ SUT API failed to become healthy. Container logs:"
+            docker compose logs
+            exit 1
+          fi
+
+      # -----------------------------------------------------------------------
+      # GATE 1: Fast Smoke & Connectivity SLA (< 10s)
+      # -----------------------------------------------------------------------
+      - name: "Gate 1: Fast Smoke & Platform Connectivity SLA"
+        run: npx playwright test tests/smoke/platform-connectivity.spec.ts --reporter=list
+
+      # -----------------------------------------------------------------------
+      # GATE 2: API Contract & Database Invariant Validations
+      # -----------------------------------------------------------------------
+      - name: "Gate 2: API Contract & DB Invariant Validation"
+        run: npx playwright test tests/api tests/database --reporter=list
+
+      # -----------------------------------------------------------------------
+      # GATE 3: UI End-to-End User Journeys (Page Object Model)
+      # -----------------------------------------------------------------------
+      - name: "Gate 3: UI E2E User Journey & POM Validation"
+        run: npx playwright test tests/ui --reporter=list
+
+      # -----------------------------------------------------------------------
+      # GATE 4: Concurrency & SLA Performance Benchmark
+      # -----------------------------------------------------------------------
+      - name: "Gate 4: Concurrency & SLA Performance Load Benchmark"
+        run: npm run test:perf
+
+      # -----------------------------------------------------------------------
+      # Telemetry Ingestion & TestOps Artifacts
+      # -----------------------------------------------------------------------
+      - name: Ingest Test Metrics to PostgreSQL Warehouse
+        if: always()
+        run: npm run metrics:ingest || true
 
       - name: Upload Playwright Trace & HTML Report
         if: always()
@@ -124,23 +91,3 @@ jobs:
           name: playwright-ui-report
           path: playwright-report/
           retention-days: 14
-
-  # =========================================================================
-  # STAGE 4: Automated Quality Gate Verdict & Telemetry
-  # =========================================================================
-  quality-gate-verdict:
-    name: "Gate 4: Automated Quality Gate Verdict"
-    needs: [api-database-gate, ui-e2e-gate]
-    runs-on: ubuntu-latest
-    if: always()
-
-    steps:
-      - name: Evaluate Multi-Layer Pipeline Verdict
-        run: |
-          if [ "${{ needs.api-database-gate.result }}" != "success" ] || [ "${{ needs.ui-e2e-gate.result }}" != "success" ]; then
-            echo "❌ QUALITY GATE FAILED: One or more test layers did not meet reliability criteria."
-            echo "API/Database Gate: ${{ needs.api-database-gate.result }}"
-            echo "UI E2E Gate: ${{ needs.ui-e2e-gate.result }}"
-            exit 1
-          fi
-          echo "✅ QUALITY GATE PASSED: All 48 multi-layer validations (UI, API, DB) satisfied strict reliability criteria."
