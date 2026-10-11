@@ -24,7 +24,7 @@ export const RunControlBar: React.FC<RunControlBarProps> = ({
           onClick={() => onTriggerRun('all')}
         >
           <Play size={15} fill="#fff" />
-          <span>{status.isRunning ? 'Executing Suite...' : 'Run All (48 Tests)'}</span>
+          <span>{status.isRunning ? 'Executing Suite...' : 'Run All Suites'}</span>
         </button>
 
         <button
