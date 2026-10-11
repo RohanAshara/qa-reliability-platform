@@ -1,6 +1,6 @@
 # 🛡️ Enterprise Automated QA & Reliability Testing Platform
 
-[![CI/CD Quality Gates](https://github.com/placeholder/qa-reliability-platform/actions/workflows/quality-gates.yml/badge.svg)](https://github.com/placeholder/qa-reliability-platform)
+[![CI/CD Quality Gates](https://github.com/RohanAshara/qa-reliability-platform/actions/workflows/quality-gates.yml/badge.svg)](https://github.com/RohanAshara/qa-reliability-platform)
 [![Playwright](https://img.shields.io/badge/Playwright-1.49-45ba4b?logo=playwright)](https://playwright.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?logo=typescript)](https://www.typescriptlang.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16_Alpine-336791?logo=postgresql)](https://www.postgresql.org/)
@@ -233,7 +233,7 @@ Designed to run smoothly on developer workstations with limited RAM (e.g., 8 GB)
 
 ### 2. Clone & Install
 ```bash
-git clone https://github.com/placeholder/qa-reliability-platform.git
+git clone https://github.com/RohanAshara/qa-reliability-platform.git
 cd qa-reliability-platform
 npm install
 ```
