@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'QA Reliability & TestOps Dashboards'
+    orgId: 1
+    folder: 'QA Platform'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

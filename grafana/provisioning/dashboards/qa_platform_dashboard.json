@@ -1,0 +1,345 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "📊 Executive Quality & TestOps Overview",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 85 },
+              { "color": "green", "value": 98 }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 1 },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT round((passed_tests::numeric / NULLIF(total_tests, 0)::numeric) * 100, 1) as \"Pass Rate %\" FROM test_runs ORDER BY created_at DESC LIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "title": "Overall Pass Rate",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "blue", "mode": "fixed" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "blue", "value": null }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT total_tests as \"Total Executed\" FROM test_runs ORDER BY created_at DESC LIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Executed Tests",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 1 },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT failed_tests as \"Failures\" FROM test_runs ORDER BY created_at DESC LIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "title": "Failed Tests",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "fixedColor": "purple", "mode": "fixed" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "purple", "value": null }]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 1 },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT round(duration_ms::numeric / 1000.0, 2) as \"Duration (s)\" FROM test_runs ORDER BY created_at DESC LIMIT 1;",
+          "refId": "A"
+        }
+      ],
+      "title": "Suite Duration",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+      "id": 101,
+      "title": "📈 Multi-Layer Test Distribution & Trends",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 10, "x": 0, "y": 7 },
+      "id": 5,
+      "options": {
+        "displayLabels": ["percent", "name"],
+        "legend": { "displayMode": "list", "placement": "right" },
+        "pieType": "donut",
+        "reduceOptions": { "calcs": ["lastNotNull"], "values": true },
+        "tooltip": { "mode": "single" }
+      },
+      "pluginVersion": "10.4.0",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT layer as \"Layer\", count(*) as \"Test Count\" FROM test_results GROUP BY layer ORDER BY \"Test Count\" DESC;",
+          "refId": "A"
+        }
+      ],
+      "title": "Tests Distribution by Layer (API, DB, UI, Smoke)",
+      "type": "piechart"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 14, "x": 10, "y": 7 },
+      "id": 6,
+      "options": {
+        "legend": { "calcs": [], "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "single", "sort": "none" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT created_at as time, duration_ms as \"Duration\" FROM test_runs ORDER BY created_at ASC;",
+          "refId": "A"
+        }
+      ],
+      "title": "Execution Duration Trend",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+      "id": 102,
+      "title": "📋 Historical Test Execution Runs",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "custom": {
+            "align": "auto",
+            "cellOptions": { "type": "auto" },
+            "inspect": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "failed": { "color": "red", "index": 1, "text": "FAILED" },
+                "passed": { "color": "green", "index": 0, "text": "PASSED" }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [{ "color": "green", "value": null }]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "id": 7,
+      "options": {
+        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
+        "showHeader": true,
+        "sortBy": [{ "desc": true, "displayName": "Executed At" }]
+      },
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT run_id as \"Run ID\", suite_name as \"Suite\", status as \"Status\", total_tests as \"Total\", passed_tests as \"Passed\", failed_tests as \"Failed\", round(duration_ms::numeric / 1000.0, 2) as \"Duration (s)\", created_at as \"Executed At\" FROM test_runs ORDER BY created_at DESC LIMIT 20;",
+          "refId": "A"
+        }
+      ],
+      "title": "Test Run Execution History",
+      "type": "table"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": ["qa", "automation", "reliability", "testops"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "QA Reliability & TestOps Platform",
+  "uid": "qa-platform-main",
+  "version": 1
+}

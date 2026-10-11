@@ -1,0 +1,19 @@
+apiVersion: 1
+
+datasources:
+  - name: PostgreSQL-QA-Metrics
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    user: admin
+    secureJsonData:
+      password: password
+    jsonData:
+      database: qa_db
+      sslmode: disable
+      maxOpenConns: 5
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+      postgresVersion: 1600
+    isDefault: true
+    editable: true
