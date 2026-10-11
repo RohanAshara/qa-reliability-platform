@@ -1,0 +1,39 @@
+{
+  "name": "qa-reliability-platform",
+  "version": "1.0.0",
+  "description": "Enterprise Automated QA & Reliability Testing Platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test tests/smoke",
+    "test:api": "playwright test tests/api",
+    "test:db": "playwright test tests/database",
+    "test:ui": "playwright test tests/ui",
+    "test:all": "playwright test",
+    "test:headed": "playwright test tests/ui --headed",
+    "report": "playwright show-report",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f"
+  },
+  "keywords": [
+    "qa",
+    "automation",
+    "playwright",
+    "typescript",
+    "database-testing",
+    "api-testing",
+    "e2e-testing",
+    "reliability"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.10.1",
+    "@types/pg": "^8.11.10",
+    "dotenv": "^16.4.7",
+    "pg": "^8.13.1",
+    "typescript": "^5.7.2"
+  }
+}

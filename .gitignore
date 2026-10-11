@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Test Reports & Artifacts
+playwright-report/
+test-results/
+reports/*.xml
+reports/*.html
+reports/*.json
+!reports/.gitkeep
+
+# Environment Variables
+.env
+*.env.local
+
+# Operating System & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Docker volumes
+postgres-data/
