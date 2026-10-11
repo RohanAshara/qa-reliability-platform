@@ -40,8 +40,8 @@ jobs:
       - name: Start SUT Containers (Postgres + Target API)
         run: |
           docker compose up -d postgres target-api
-          echo "Waiting for services to become healthy..."
-          timeout 60 bash -c 'until docker compose ps | grep "qa_target_api" | grep "healthy"; do sleep 2; done' || true
+          echo "Waiting for Target SUT API to become healthy..."
+          curl --retry 20 --retry-delay 2 --retry-connrefused http://127.0.0.1:5000/health
           docker compose ps
 
       - name: Execute Fast Smoke Gate
@@ -69,15 +69,19 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Install Playwright Browsers (Chromium Only)
+        run: npx playwright install --with-deps chromium
+
       - name: Start SUT Containers
         run: |
           docker compose up -d postgres target-api
-          timeout 60 bash -c 'until docker compose ps | grep "qa_target_api" | grep "healthy"; do sleep 2; done' || true
+          echo "Waiting for Target SUT API..."
+          curl --retry 20 --retry-delay 2 --retry-connrefused http://127.0.0.1:5000/health
           docker compose ps
 
       - name: Execute API & Database Test Suites
         run: |
-          npx playwright test tests/api tests/database --reporter=list,json:reports/test-results.json
+          npx playwright test tests/api tests/database --reporter=list
 
       - name: Ingest Test Metrics to PostgreSQL Warehouse
         if: always()
@@ -111,7 +115,7 @@ jobs:
 
       - name: Execute UI E2E Journey Tests
         run: |
-          npx playwright test tests/ui --reporter=list,html:playwright-report
+          npx playwright test tests/ui --reporter=list
 
       - name: Upload Playwright Trace & HTML Report
         if: always()
