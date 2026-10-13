@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const { Pool } = require('pg');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env.test') });
+const { auditUrl } = require('../crawler/crawlerService');
 
 const app = express();
 const PORT = process.env.DASHBOARD_PORT || 4000;
@@ -90,6 +91,12 @@ app.post('/api/run', async (req, res) => {
   } else if (suite === 'ui') {
     testArgs.push('tests/ui');
     suiteDisplayName = 'UI & E2E Suite';
+  } else if (suite === 'config') {
+    testArgs.push('tests/config-driven');
+    suiteDisplayName = 'Level 1: Config-Driven Suite';
+  } else if (suite === 'crawler') {
+    testArgs.push('tests/crawler');
+    suiteDisplayName = 'Level 2: Universal Crawler Suite';
   }
 
   broadcastLog(`🚀 [TestOps] Starting ${suiteDisplayName} (Run ID: ${activeRunId})...`);
@@ -154,6 +161,8 @@ async function ingestMetrics(runId, suiteName) {
     if (filePath.includes('database')) return 'Database';
     if (filePath.includes('ui')) return 'UI';
     if (filePath.includes('smoke')) return 'Smoke';
+    if (filePath.includes('config-driven')) return 'Config';
+    if (filePath.includes('crawler')) return 'Crawler';
     return 'Core';
   }
 
@@ -222,6 +231,120 @@ async function ingestMetrics(runId, suiteName) {
     client.release();
   }
 }
+
+// -------------------------------------------------------------
+// Level 1: Config-Driven Targets API
+// -------------------------------------------------------------
+const targetsConfigPath = path.resolve(__dirname, '../config/web-targets.json');
+
+app.get('/api/config-targets', (req, res) => {
+  try {
+    if (!fs.existsSync(targetsConfigPath)) {
+      return res.json([]);
+    }
+    const data = JSON.parse(fs.readFileSync(targetsConfigPath, 'utf-8'));
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/config-targets', (req, res) => {
+  try {
+    const targets = req.body;
+    fs.writeFileSync(targetsConfigPath, JSON.stringify(targets, null, 2), 'utf-8');
+    res.json({ success: true, count: targets.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// Level 2: Universal Web Crawler Diagnostic API
+// -------------------------------------------------------------
+app.post('/api/crawler/audit', async (req, res) => {
+  const { url, maxLinksToCheck = 15, slaMs = 3500 } = req.body;
+  if (!url) {
+    return res.status(400).json({ error: 'Missing required field: url' });
+  }
+
+  try {
+    broadcastLog(`🕷️ [Crawler Engine] Starting automated deep audit on: ${url}`);
+    const report = await auditUrl(url, { maxLinksToCheck, slaMs });
+    broadcastLog(
+      `✅ [Crawler Engine] Completed audit for ${url}: ${report.metrics.totalLinksScanned} links scanned, ${report.metrics.brokenLinksCount} broken, ${report.metrics.consoleErrorsCount} console errors.`
+    );
+    res.json(report);
+  } catch (err) {
+    broadcastLog(`❌ [Crawler Engine] Error auditing ${url}: ${err.message}`);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// Level 3: Playwright Codegen Interactive Studio API
+// -------------------------------------------------------------
+const generatedDir = path.resolve(__dirname, '../tests/generated');
+if (!fs.existsSync(generatedDir)) {
+  fs.mkdirSync(generatedDir, { recursive: true });
+}
+
+app.post('/api/codegen/launch', (req, res) => {
+  const { url = 'https://www.saucedemo.com', testName = `recorded_${Date.now()}` } = req.body;
+  const cleanName = testName.replace(/[^a-zA-Z0-9_-]/g, '_');
+  const outFile = path.join(generatedDir, `${cleanName}.spec.ts`);
+
+  const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+  broadcastLog(`🎥 [Codegen Studio] Launching interactive recorder for ${url} -> ${cleanName}.spec.ts`);
+
+  const codegenProcess = spawn(npxCmd, ['playwright', 'codegen', url, '-o', outFile], {
+    cwd: path.resolve(__dirname, '..'),
+    detached: true,
+    stdio: 'ignore',
+    shell: true,
+  });
+  codegenProcess.unref();
+
+  res.json({
+    message: 'Playwright Codegen launched in separate window',
+    outputFile: `${cleanName}.spec.ts`,
+    url,
+  });
+});
+
+app.get('/api/generated-tests', (req, res) => {
+  try {
+    if (!fs.existsSync(generatedDir)) {
+      return res.json([]);
+    }
+    const files = fs.readdirSync(generatedDir).filter((f) => f.endsWith('.ts') || f.endsWith('.js'));
+    const details = files.map((filename) => {
+      const fullPath = path.join(generatedDir, filename);
+      const stat = fs.statSync(fullPath);
+      return {
+        filename,
+        sizeBytes: stat.size,
+        updatedAt: stat.mtime.toISOString(),
+      };
+    });
+    res.json(details);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/generated-tests/:filename', (req, res) => {
+  try {
+    const filePath = path.join(generatedDir, path.basename(req.params.filename));
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+    const content = fs.readFileSync(filePath, 'utf-8');
+    res.json({ filename: req.params.filename, content });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // -------------------------------------------------------------
 // Test Run Metrics Endpoints

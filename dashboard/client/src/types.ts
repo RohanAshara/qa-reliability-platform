@@ -17,7 +17,7 @@ export interface TestResult {
   run_id: string;
   test_title: string;
   file_path: string;
-  layer: 'API' | 'Database' | 'UI' | 'Smoke' | 'Core';
+  layer: 'API' | 'Database' | 'UI' | 'Smoke' | 'Config' | 'Crawler' | 'Core';
   status: 'passed' | 'failed' | 'skipped';
   duration_ms: number;
   error_message: string | null;
@@ -45,3 +45,60 @@ export interface SystemHealth {
   grafana: string;
   timestamp: string;
 }
+
+export interface WebTarget {
+  id: string;
+  name: string;
+  url: string;
+  expectedTitle?: string;
+  slaBudgetMs: number;
+  checkSsl: boolean;
+  enabled: boolean;
+}
+
+export interface CrawlerBrokenLink {
+  href: string;
+  text: string;
+  status: number;
+  isBroken: boolean;
+  error?: string;
+  durationMs: number;
+}
+
+export interface CrawlerReport {
+  url: string;
+  title: string;
+  httpStatus: number;
+  durationMs: number;
+  slaBudgetMs: number;
+  slaPassed: boolean;
+  loadError: string | null;
+  overallHealthy: boolean;
+  metrics: {
+    totalLinksScanned: number;
+    brokenLinksCount: number;
+    consoleErrorsCount: number;
+    networkFailuresCount: number;
+  };
+  brokenLinks: CrawlerBrokenLink[];
+  allLinks: CrawlerBrokenLink[];
+  consoleErrors: Array<{ text: string; location: string }>;
+  networkFailures: Array<{ url: string; failure: string }>;
+  screenshotBase64: string | null;
+  auditedAt: string;
+}
+
+export interface GeneratedTest {
+  filename: string;
+  sizeBytes: number;
+  updatedAt: string;
+}
+
+export type NavTab =
+  | 'overview'
+  | 'config'
+  | 'crawler'
+  | 'studio'
+  | 'explorer'
+  | 'grafana'
+  | 'console';
