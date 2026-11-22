@@ -1,291 +1,219 @@
 # 🛡️ Enterprise Automated QA & Reliability Testing Platform
 
-[![CI/CD Quality Gates](https://github.com/RohanAshara/qa-reliability-platform/actions/workflows/quality-gates.yml/badge.svg)](https://github.com/RohanAshara/qa-reliability-platform)
-[![Playwright](https://img.shields.io/badge/Playwright-1.49-45ba4b?logo=playwright)](https://playwright.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?logo=typescript)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16_Alpine-336791?logo=postgresql)](https://www.postgresql.org/)
-[![Grafana](https://img.shields.io/badge/Grafana-OSS_3001-F46800?logo=grafana)](https://grafana.com/)
-[![React](https://img.shields.io/badge/React-18_TypeScript-61DAFB?logo=react)](https://react.dev/)
+[![Playwright](https://img.shields.io/badge/Playwright-1.49-45ba4b?logo=playwright&logoColor=white)](https://playwright.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16_Alpine-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Grafana](https://img.shields.io/badge/Grafana-OSS_3001-F46800?logo=grafana&logoColor=white)](https://grafana.com/)
+[![React](https://img.shields.io/badge/React-18_Vite-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-> **A production-ready, multi-layer TestOps and Reliability Engineering platform designed to automate UI, REST API, and Database Invariant validations with integrated real-time Grafana observability, a React 18 Command Center, and GitHub Actions CI/CD Quality Gates.**
+> **A modern, full-stack TestOps and Reliability Engineering platform. It automates testing across UI, REST APIs, and Database Invariants, featuring an interactive React Command Center, deep link auditing, no-code test recording, and live Grafana telemetry.**
 
 ---
 
-## 📑 Table of Contents
+## 📌 Table of Contents
 
-- [Overview & Architecture](#-overview--architecture)
-- [Key Engineering Highlights](#-key-engineering-highlights)
-- [Multi-Layer Testing Strategy](#-multi-layer-testing-strategy)
-  - [Layer 1: UI End-to-End Automation (Page Object Model)](#layer-1-ui-end-to-end-automation-page-object-model)
-  - [Layer 2: REST API Contract & SLA Validation](#layer-2-rest-api-contract--sla-validation)
-  - [Layer 3: Database Invariants & Relational Integrity](#layer-3-database-invariants--relational-integrity)
-- [TestOps Observability & Command Center](#-testops-observability--command-center)
-  - [PostgreSQL Metrics Warehouse](#postgresql-metrics-warehouse)
-  - [Grafana TestOps Dashboards](#grafana-testops-dashboards)
-  - [React 18 + TypeScript Visual Command Center](#react-18--typescript-visual-command-center)
-- [Performance & SLA Benchmarking](#-performance--sla-benchmarking)
-- [CI/CD Multi-Stage Quality Gates](#-cicd-multi-stage-quality-gates)
-- [Hardware & Resource Optimization](#-hardware--resource-optimization)
+- [Why This Project Exists](#-why-this-project-exists)
+- [Platform Architecture](#-platform-architecture)
+- [Core Testing Modes](#-core-testing-modes)
+  - [Level 1: Zero-Code Config-Driven Testing](#level-1-zero-code-config-driven-testing)
+  - [Level 2: Universal Web Crawler & Broken Link Audit](#level-2-universal-web-crawler--broken-link-audit)
+  - [Level 3: Interactive Codegen Test Studio](#level-3-interactive-codegen-test-studio)
+  - [Full-Stack Code Suites (UI + API + Database)](#full-stack-code-suites-ui--api--database)
+- [Target Applications Tested (SUTs)](#-target-applications-tested-suts)
+- [Observability & Dashboard](#-observability--dashboard)
+- [Project Directory Structure](#-project-directory-structure)
 - [Quickstart Guide](#-quickstart-guide)
-- [Resume & Portfolio Project Showcase](#-resume--portfolio-project-showcase)
+- [Available Commands](#-available-commands)
+- [Engineering Highlights](#-engineering-highlights-for-interviews)
 
 ---
 
-## 🏛️ Overview & Architecture
+## 💡 Why This Project Exists
 
-Modern enterprise platforms often fail not in UI rendering or simple HTTP status codes, but in **data consistency, state desynchronization, and silent database corruption**.
+In enterprise systems, production bugs rarely happen from simple broken HTML. They happen from **data inconsistency, API contract drifts, and silent database corruption**.
 
-This platform was built to bridge the gap between frontend automation, backend API contracts, and persistent relational data integrity. It executes automated tests across three distinct layers, ingests all execution telemetry into a dedicated PostgreSQL metrics warehouse, and visualizes system health through an interactive **React + TypeScript Command Center** and auto-provisioned **Grafana TestOps dashboards**.
+This platform was engineered as an **all-in-one QA automation hub** that:
+1. Validates user journeys in the **browser (UI)**.
+2. Enforces **REST API contracts and latency SLAs**.
+3. Verifies **PostgreSQL relational integrity and financial invariants** at the database level.
+4. Provides a **single-pane web dashboard** where any developer, QA engineer, or manager can run tests, record scenarios, audit websites, and view real-time Grafana telemetry without touching the terminal.
+
+---
+
+## 🏛️ Platform Architecture
 
 ```mermaid
-graph TD
-    subgraph UI ["Layer 1: UI E2E (Playwright POM)"]
-        U1["LoginPage"] --> U2["InventoryPage"]
-        U2 --> U3["CartPage"]
-        U3 --> U4["CheckoutPage"]
+flowchart TD
+    subgraph UI_Hub["QA Command Center & Observability (:4000)"]
+        Dashboard["React 18 + Vite Web Dashboard"]
+        Console["Live SSE Log Terminal"]
+        Grafana["Grafana TestOps Dashboards (:3001)"]
     end
 
-    subgraph API ["Layer 2: REST API Contracts & SLAs"]
-        A1["JWT Auth & Role RBAC"]
-        A2["Inventory & Price Validations"]
-        A3["Order Placement & Idempotency"]
+    subgraph Engines["Execution Engines"]
+        L1["Level 1: Config-Driven Target Engine"]
+        L2["Level 2: Universal Diagnostic Crawler"]
+        L3["Level 3: Playwright Codegen Studio"]
+        L4["Code Suites: API + UI + Database"]
     end
 
-    subgraph DB ["Layer 3: PostgreSQL Invariant Engine"]
-        D1["Relational FK & Orphan Checks"]
-        D2["Financial Ledger Zero-Sum Invariant"]
-        D3["Inventory Floor & Stock Concurrency"]
-        D4["Audit Trail Immutability Checks"]
+    subgraph Targets["Systems Under Test (SUTs)"]
+        T1["Target 1: Static Showcase (:5001) - Node.js"]
+        T2["Target 2: NexusOps SaaS (:5002) - Python"]
+        T3["Target 3: Aura Luxe Commerce (:5003) - .NET 10"]
+        T0["Target 0: Mock REST SUT (:5000)"]
     end
 
-    subgraph SUT ["System Under Test (Docker SUT)"]
-        App["Node 20 Alpine REST SUT :5000"]
-        Postgres["PostgreSQL 16 Alpine :5432"]
+    subgraph Data["Telemetry & Storage"]
+        PG[("PostgreSQL 16: Telemetry Warehouse")]
     end
 
-    subgraph Obs ["TestOps Observability & Control"]
-        Ingest["Telemetry Ingestion Worker"]
-        MetricsDB[("PostgreSQL Metrics Warehouse")]
-        Grafana["Grafana Dashboards :3001"]
-        ReactUI["React 18 Command Center :4000"]
-        Server["Platform Orchestrator (SSE) :4000"]
-    end
-
-    UI --> App
-    API --> App
-    App --> Postgres
-    DB --> Postgres
-
-    UI -.-> Ingest
-    API -.-> Ingest
-    DB -.-> Ingest
-    Ingest --> MetricsDB
-    MetricsDB --> Grafana
-    Server --> ReactUI
-    Grafana --> ReactUI
+    Dashboard --> Engines
+    Engines --> Targets
+    Engines --> Console
+    Engines --> PG
+    PG --> Grafana
+    Grafana --> Dashboard
 ```
 
 ---
 
-## ⚡ Key Engineering Highlights
+## 🎯 Core Testing Modes
 
-- **48 Automated Tests Passing in ~11.9s**: Comprehensive coverage spanning smoke connectivity, JWT auth, product catalog, checkout journeys, database integrity, and relational constraints.
-- **PostgreSQL Invariant Engine**: Direct query-level validation of business invariants, such as ensuring `stock >= 0`, verifying financial ledger totals match line items exactly (`total = SUM(quantity * price)`), and scanning for orphaned child records.
-- **Zero-Polling Real-Time Log Streaming**: Platform Orchestrator backend utilizes Server-Sent Events (SSE) to stream test execution output line-by-line to the React frontend.
-- **Embedded Grafana TestOps Analytics**: Auto-provisioned Grafana dashboards embedded directly inside the command center via anonymous security tokens, displaying pass-rate donuts, layer breakdowns, and latency percentiles.
-- **Ultra-Lightweight Hardware Footprint**: Optimized for modest workstation specifications (e.g., 8GB RAM machines). Total Docker stack (PostgreSQL + SUT API + Grafana) consumes **less than 230 MB of RAM** combined.
-- **Deterministic Test Isolation**: Automated UUID-tagged test fixtures and teardown hooks prevent test pollution and eliminate flakiness across concurrent runs.
+### Level 1: Zero-Code Config-Driven Testing
+* **How it works**: Monitors any web application registered in `config/web-targets.json`.
+* **What it validates**: Uptime, HTTP status, SSL certificate, page titles, and response latency SLA limits (e.g. `< 1000ms`).
+* **Zero code required**: Simply add a URL through the dashboard and click **"Run Config Suite"**.
 
----
+### Level 2: Universal Web Crawler & Broken Link Audit
+* **How it works**: Powered by a headless Chromium engine (`crawlerService.js`).
+* **What it validates**: Scans any public or local URL, recursively crawls internal anchor links, discovers broken links (404/500/530 HTTP errors), captures unhandled JavaScript console errors, and takes a visual full-page snapshot.
 
-## 🧪 Multi-Layer Testing Strategy
+### Level 3: Interactive Codegen Test Studio
+* **How it works**: Integrated browser recorder. Enter a target URL and click **"Launch Recorder"**.
+* **What it generates**: As you click buttons and fill out forms, Playwright generates clean, production-ready TypeScript test files into `tests/generated/<name>.spec.ts`.
+* **Run Button**: Run individual recorded scenarios directly from the dashboard table with one click!
 
-### Layer 1: UI End-to-End Automation (Page Object Model)
-Built using **Playwright with TypeScript**, adhering strictly to the **Page Object Model (POM)** pattern to maximize maintainability and reduce selector coupling:
-- **`LoginPage`**: Enforces error handling for locked-out accounts, invalid credentials, and blank field validation.
-- **`InventoryPage`**: Dynamically sorts products by price/alphabetical order, validates catalog integrity, and asserts badge badge counter synchronization.
-- **`CartPage`**: Verifies item retention across navigation, item removal, and subtotal consistency.
-- **`CheckoutPage`**: Tests complete end-to-end checkout funnel from user dispatch info to order confirmation.
-
-### Layer 2: REST API Contract & SLA Validation
-Powered by a custom **`ApiClient`** abstraction with automatic timing instrumentation:
-- **Authentication & RBAC**: Tests valid JWT creation, rejected passwords, expired tokens, role-based admin endpoints, and malformed authorization headers.
-- **Product Catalog**: Verifies schema contract conformance, negative pagination boundaries, ID query lookups, and latency SLAs (< 250ms per call).
-- **Order Processing**: Validates single-item and multi-item orders, out-of-stock rejection, invalid product ID handling, and authorization guards.
-
-### Layer 3: Database Invariants & Relational Integrity
-Interacts directly with the PostgreSQL database using an isolated connection pool (`fixtures/database.ts`):
-- **Data Persistence**: Asserts that API-created records commit immediately to PostgreSQL tables with matching column types.
-- **Business Invariants**: Validates that no product has a negative price or stock, orders contain valid shipping statuses, and order totals equal the exact sum of line items.
-- **Relational Integrity**: Executes cross-table orphan detection queries (`LEFT JOIN ... WHERE parent.id IS NULL`), enforces foreign key cascade behavior, and validates audit trail records.
+### Full-Stack Code Suites (UI + API + Database)
+* **UI Layer (`tests/ui/`)**: Implements the **Page Object Model (POM)** pattern (`LoginPage`, `InventoryPage`, `CartPage`, `CheckoutPage`) to ensure robust selectors and maintainable test code.
+* **API Layer (`tests/api/`)**: Validates REST endpoints, JWT authentication tokens, role-based access control (RBAC), and response time SLAs (< 250ms).
+* **Database Invariant Layer (`tests/database/`)**: Queries PostgreSQL directly to assert relational integrity, verify zero orphaned child records, and check financial invariants (e.g., `order_total == SUM(line_item_price * quantity)`).
 
 ---
 
-## 📊 TestOps Observability & Command Center
+## 🎯 Target Applications Tested (SUTs)
 
-### PostgreSQL Metrics Warehouse
-Every test execution persists detailed telemetry into relational schemas:
-- `test_runs`: Master run metadata (`run_id`, `suite_name`, `status`, `total_tests`, `duration_ms`, `triggered_by`).
-- `test_results`: Granular test data (`test_title`, `file_path`, `layer` [UI/API/Database], `status`, `duration_ms`, `error_message`, `stack_trace`).
+The workspace includes three dedicated, multi-language target applications used to demonstrate real-world testing across different stacks:
 
-### Grafana TestOps Dashboards (`:3001`)
-Auto-provisioned via YAML and JSON without manual configuration:
-- **Executive KPI Cards**: Total Runs, Overall Pass Rate (%), Total Failures Detected, Average Run Duration.
-- **Pass vs Fail Donut Gauge**: Real-time breakdown of test results.
-- **Test Distribution by Layer**: Multi-layer distribution bar chart (UI vs. API vs. Database).
-- **Duration Trend Over Time**: Historical regression tracking of test execution speeds.
-- **Test Runs Audit Table**: Chronological log of recent executions with instant status badges.
-
-### React 18 + TypeScript Visual Command Center (`:4000`)
-A modern, dark-mode web application featuring:
-- **Interactive Suite Execution**: Launch `All Suites`, `Smoke Suite`, `API Suite`, `Database Suite`, or `UI E2E Suite` directly from the browser.
-- **Live Terminal Console**: Streams stdout/stderr from test runners in real-time via Server-Sent Events (SSE).
-- **Embedded Grafana Dashboard Tab**: Instant one-click switching between raw test results and high-level visual analytics.
-- **Interactive Failure Triaging Modal**: Displays stack traces and failing steps with one-click copy functionality.
-- **Database Entity Health Monitor**: Real-time counts of users, products, orders, audit logs, and historical test runs in PostgreSQL.
+| Application | Technology Stack | Port | Tested Capabilities |
+| :--- | :--- | :---: | :--- |
+| **NovaStack Cloud** | JavaScript, Node.js, HTML5 | `5001` | Broken link crawling, DOM theme toggling, pricing switcher, and form validations. |
+| **NexusOps Enterprise** | Python 3.15, Flask, SQLite | `5002` | Role-based JWT auth, incident lifecycle transitions, and SQLite database invariants. |
+| **Aura Luxe Commerce** | C# / .NET 10, ASP.NET Core | `5003` | Product catalog filtering, coupon engine, dynamic cart, and full end-to-end checkout. |
 
 ---
 
-## 🚀 Performance & SLA Benchmarking
+## 📊 Observability & Dashboard
 
-The platform includes an automated SLA and concurrency benchmark script (`performance/sla-load.js`) to enforce performance quality gates:
+* **Web Command Center (`http://localhost:4000`)**:
+  * Unified control bar to trigger any test suite (`Smoke`, `API`, `Database`, `UI`, `Config`, `All`).
+  * Real-time terminal log output streaming via Server-Sent Events (SSE).
+  * Interactive failure modal with stack traces and failing step inspection.
+* **Grafana TestOps Analytics (`http://localhost:3001`)**:
+  * Auto-provisioned dashboards embedded directly into the Command Center.
+  * Real-time pass/fail gauges, multi-layer distribution charts, and latency trends stored in PostgreSQL.
 
-```bash
-npm run test:perf
+---
+
+## 📁 Project Directory Structure
+
 ```
-
-### Benchmark Results Under 25 Concurrent Workers:
-```text
-======================================================================
-🚀 ENTERPRISE QA RELIABILITY PLATFORM - SLA PERFORMANCE BENCHMARK
-======================================================================
-Target SUT Base URL:   http://localhost:5000
-Concurrency Limit:    25 concurrent workers
-Total Requests:       150 requests across endpoints
-P95 Latency SLA Cap:  200 ms
-P99 Latency SLA Cap:  350 ms
-----------------------------------------------------------------------
-Total Requests Completed: 150
-Successful Responses:     150 (HTTP 2xx)
-Failed Responses:         0 (HTTP non-2xx / network drop)
-Error Rate:               0.00%
-Total Execution Time:     0.35s
-Throughput:               426.1 requests/sec (RPS)
-----------------------------------------------------------------------
-Min Latency:              11.77 ms
-P50 (Median):             23.91 ms
-P95:                      185.83 ms (SLA Threshold: < 200 ms)
-P99:                      225.23 ms (SLA Threshold: < 350 ms)
-======================================================================
-✅ SLA QUALITY GATE: PASSED (All latency thresholds met)
-======================================================================
+qa-reliability-platform/
+├── config/                 # Registry for zero-code web targets (web-targets.json)
+├── dashboard/              # Full-stack Command Center (Node.js backend + React 18 UI)
+│   ├── server.js           # Orchestrator API & real-time SSE log streamer
+│   └── client/             # React + Vite + Material UI frontend
+├── tests/                  # Automated test suites (57 total tests)
+│   ├── api/                # REST API contract & authentication tests
+│   ├── config-driven/      # Level 1 automated target health tests
+│   ├── crawler/            # Level 2 universal link audit tests
+│   ├── database/           # Level 3 PostgreSQL schema & invariant tests
+│   ├── generated/          # Tests recorded via Codegen Studio
+│   ├── smoke/              # Fast connectivity smoke checks (< 10s)
+│   ├── targets/            # Dedicated E2E tests for the 3 target apps
+│   └── ui/                 # Browser E2E user journeys using POM
+├── pages/                  # Page Object Model classes (LoginPage, InventoryPage, etc.)
+├── crawler/                # Deep diagnostic link crawler engine (crawlerService.js)
+├── performance/            # SLA latency & concurrency load testing (sla-load.js)
+├── fixtures/               # Reusable Playwright contexts & DB client fixtures
+├── sql/                    # PostgreSQL initialization schema & seed data
+├── sut/                    # Local Docker mock REST service (Port 5000)
+├── reports/                # Test outputs, JSON metrics, and JUnit XML
+└── docker-compose.yml      # Multi-container orchestration (PostgreSQL + Grafana + SUT)
 ```
 
 ---
 
-## 🚦 CI/CD Multi-Stage Quality Gates
-
-The pipeline defined in `.github/workflows/quality-gates.yml` enforces four progressive verification gates:
-
-```text
-[Push / Pull Request]
-         │
-         ▼
-┌──────────────────────────────────────────────┐
-│  Gate 1: Fast Smoke & Connectivity SLA       │  (Fails fast in < 30 seconds if containers or DB are down)
-└──────────────────────────────────────────────┘
-         │
-         ├─────────────────────────────────────┐
-         ▼                                     ▼
-┌────────────────────────────────┐   ┌────────────────────────────────┐
-│  Gate 2: API & Database Invar. │   │  Gate 3: UI E2E User Journeys  │
-│  (Contracts, FKs, Ledgers)     │   │  (Playwright POM & Screenshots)│
-└────────────────────────────────┘   └────────────────────────────────┘
-         │                                     │
-         └──────────────────┬──────────────────┘
-                            ▼
-┌──────────────────────────────────────────────┐
-│  Gate 4: Automated Quality Gate Verdict      │  (Publishes HTML Report, enforces 0% failure policy)
-└──────────────────────────────────────────────┘
-```
-
----
-
-## 💻 Hardware & Resource Optimization
-
-Designed to run smoothly on developer workstations with limited RAM (e.g., 8 GB):
-| Component | Image / Process | Memory Allocation / Footprint |
-| :--- | :--- | :--- |
-| **Database** | `postgres:16-alpine` | ~45 MB RAM |
-| **Target SUT API** | `node:20-alpine` | ~26 MB RAM |
-| **Grafana OSS** | `grafana/grafana-oss:11.2.0` | ~156 MB RAM |
-| **Platform Server** | `node dashboard/server.js` | ~35 MB RAM |
-| **Total Stack** | **Entire TestOps Infrastructure** | **~262 MB RAM Total** |
-
----
-
-## 🛠️ Quickstart Guide
+## 🚀 Quickstart Guide
 
 ### 1. Prerequisites
-- [Node.js](https://nodejs.org/) (v20+)
-- [Docker Desktop](https://www.docker.com/)
+* [Node.js](https://nodejs.org/) (v20 or higher)
+* [Docker Desktop](https://www.docker.com/)
 
-### 2. Clone & Install
+### 2. Install Dependencies
 ```bash
-git clone https://github.com/RohanAshara/qa-reliability-platform.git
 cd qa-reliability-platform
 npm install
 ```
 
-### 3. Start Docker Infrastructure
+### 3. Start Infrastructure & Test Targets
 ```bash
-# Starts PostgreSQL (5432), Target REST SUT (5000), and Grafana (3001)
+# 1. Start Docker containers (PostgreSQL 5432, Grafana 3001, Target SUT 5000)
 npm run docker:up
+
+# 2. (Optional) Start the 3 local target apps (Ports 5001, 5002, 5003)
+cd ..
+start-all-targets.bat
+cd qa-reliability-platform
 ```
 
-### 4. Run Automated Test Suites
+### 4. Launch the Web Dashboard
 ```bash
-# Run Fast Smoke connectivity tests
-npm run test:smoke
-
-# Run REST API contract & SLA tests
-npm run test:api
-
-# Run Database invariant & relational tests
-npm run test:db
-
-# Run UI E2E user journeys
-npm run test:ui
-
-# Run full multi-layer suite (48 tests)
-npm run test:all
-
-# Run Concurrency & SLA Performance benchmark
-npm run test:perf
-```
-
-### 5. Launch TestOps Command Center
-```bash
-# Starts Orchestrator server & serves React UI on port 4000
 npm run dashboard
 ```
-- Open **http://localhost:4000** in your browser to access the **Visual Command Center**.
-- Access the raw **Grafana Dashboard** directly at **http://localhost:3001/d/qa-platform-main**.
+Open **[http://localhost:4000](http://localhost:4000)** in your browser to access the full QA Command Center!
 
 ---
 
-## 💼 Resume & Portfolio Project Showcase
+## ⚡ Available Commands
 
-### Suggested Resume Bullet Points (SDET / QA Platform Engineer)
+| Command | Description |
+| :--- | :--- |
+| `npm run dashboard` | Launches the QA Web Command Center on port `4000`. |
+| `npm run test` | Runs the full automated test suite (57 tests). |
+| `npm run test:smoke` | Runs fast connectivity smoke tests. |
+| `npm run test:api` | Runs REST API contract and RBAC security tests. |
+| `npm run test:db` | Runs PostgreSQL database relational & invariant tests. |
+| `npm run test:ui` | Runs browser UI end-to-end tests (Page Object Model). |
+| `npm run test:config` | Runs Level 1 zero-code config-driven target tests. |
+| `npm run test:crawler`| Runs Level 2 universal broken link & health audit. |
+| `npm run test:targets`| Runs dedicated E2E tests for the 3 sample applications. |
+| `npm run test:perf` | Runs the 25-worker SLA latency and concurrency benchmark. |
+| `npm run docker:up` | Boots PostgreSQL, Grafana, and the Mock REST service. |
+| `npm run docker:down`| Safely stops and shuts down all Docker containers. |
 
-- **Architected an enterprise multi-layer QA & reliability testing platform** using **Playwright, TypeScript, and PostgreSQL**, executing 48 end-to-end UI, REST API, and database invariant tests in under 12 seconds.
-- **Engineered an automated database invariant verification engine** that enforces relational integrity, validates financial ledger balance parity (`total == SUM(line_items)`), and detects orphaned records with sub-15ms SQL validation latency.
-- **Implemented a TestOps observability stack** featuring an auto-provisioned **Grafana** dashboard and a **React 18 + TypeScript** command center streaming live runner execution logs via Server-Sent Events (SSE).
-- **Designed a 4-stage CI/CD Quality Gate pipeline** with GitHub Actions, incorporating fail-fast connectivity smoke checks, API contract SLAs (< 200ms p95), and automated PR deployment gating.
-- **Optimized containerized test infrastructure** to operate at sub-260 MB total RAM utilization across PostgreSQL, REST microservices, and Grafana via Alpine-based lightweight containerization.
+---
+
+## 💼 Engineering Highlights (For Interviews)
+
+* **Multi-Layer Reliability**: Automates testing from user clicks (UI) down to database foreign keys and mathematical financial invariants (`total == SUM(price * qty)`).
+* **TestOps Observability**: Ingests test run execution telemetry into PostgreSQL and visualizes pass rates and latency regressions via Grafana dashboards.
+* **Low-Code to High-Code Spectrum**: Offers zero-code monitoring for business stakeholders, interactive recorder for manual testers, and TypeScript code for automation engineers.
+* **Resource Efficient**: Entire Docker stack (PostgreSQL + Grafana + API) is optimized to run smoothly on developer laptops using under **300 MB of RAM**.
 
 ---
 
 ## 📜 License
-Distributed under the MIT License. See `LICENSE` for more information.
+This project is open-source and licensed under the [MIT License](LICENSE).
