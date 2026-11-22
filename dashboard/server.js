@@ -70,16 +70,21 @@ app.post('/api/run', async (req, res) => {
     return res.status(409).json({ error: 'A test run is already currently in progress' });
   }
 
-  const { suite = 'all' } = req.body;
+  const { suite = 'all', testFile } = req.body;
   isRunning = true;
-  currentSuite = suite;
+  currentSuite = testFile ? `file:${path.basename(testFile)}` : suite;
   activeRunId = `run-${Date.now()}`;
   currentLogs = [];
 
   let testArgs = ['playwright', 'test'];
   let suiteDisplayName = 'Full Suite';
 
-  if (suite === 'smoke') {
+  if (testFile) {
+    const normalized = testFile.replace(/\\/g, '/');
+    const cleanFile = normalized.startsWith('tests/') ? normalized : `tests/generated/${normalized}`;
+    testArgs.push(cleanFile);
+    suiteDisplayName = `Generated Test: ${path.basename(testFile)}`;
+  } else if (suite === 'smoke') {
     testArgs.push('--grep', '@smoke');
     suiteDisplayName = 'Smoke Suite';
   } else if (suite === 'api') {
@@ -407,7 +412,7 @@ app.get('/api/system-health', async (req, res) => {
   try {
     await pool.query('SELECT 1');
     dbOk = true;
-  } catch {}
+  } catch { }
 
   res.json({
     database: dbOk ? 'healthy' : 'disconnected',

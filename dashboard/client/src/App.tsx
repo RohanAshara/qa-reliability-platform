@@ -126,23 +126,25 @@ export function App() {
 
   // Execution trigger handler
   const handleTriggerRun = async (
-    suite: 'all' | 'smoke' | 'api' | 'database' | 'ui' | 'config' | 'crawler'
+    suite: 'all' | 'smoke' | 'api' | 'database' | 'ui' | 'config' | 'crawler' | 'file',
+    testFile?: string
   ) => {
     try {
+      const displayName = testFile ? `Generated Test: ${testFile}` : `${suite.toUpperCase()} Suite`;
       setLogs((prev) => [
         ...prev,
         `\n-------------------------------------------------------------`,
-        `🚀 [UI Dispatch] Launching ${suite.toUpperCase()} Suite...`,
+        `🚀 [UI Dispatch] Launching ${displayName}...`,
       ]);
 
       const res = await fetch('/api/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ suite }),
+        body: JSON.stringify({ suite, testFile }),
       });
 
       if (res.ok) {
-        setStatus((prev) => ({ ...prev, isRunning: true, currentSuite: suite }));
+        setStatus((prev) => ({ ...prev, isRunning: true, currentSuite: testFile ? `file:${testFile}` : suite }));
         setActiveTab('console'); // Automatically navigate to live console to observe real-time output
       }
     } catch (err) {
@@ -199,7 +201,9 @@ export function App() {
 
             {activeTab === 'crawler' && <UniversalCrawlerView />}
 
-            {activeTab === 'studio' && <TestStudioView />}
+            {activeTab === 'studio' && (
+              <TestStudioView onRunTest={(filename) => handleTriggerRun('file', filename)} />
+            )}
 
             {activeTab === 'explorer' && <CodeSuiteView tests={tests} />}
 

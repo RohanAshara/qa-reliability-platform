@@ -15,7 +15,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -49,7 +49,7 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
-          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
@@ -61,7 +61,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
       "fieldConfig": {
         "defaults": {
           "color": { "fixedColor": "blue", "mode": "fixed" },
@@ -90,7 +90,7 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
-          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
@@ -102,7 +102,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -134,7 +134,7 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
-          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
@@ -146,7 +146,7 @@
       "type": "stat"
     },
     {
-      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
       "fieldConfig": {
         "defaults": {
           "color": { "fixedColor": "purple", "mode": "fixed" },
@@ -176,7 +176,7 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
-          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
@@ -195,7 +195,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
@@ -218,7 +218,7 @@
       "pluginVersion": "10.4.0",
       "targets": [
         {
-          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
@@ -230,7 +230,7 @@
       "type": "piechart"
     },
     {
-      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
@@ -267,7 +267,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
@@ -286,7 +286,7 @@
       "type": "row"
     },
     {
-      "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+      "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -320,7 +320,7 @@
       },
       "targets": [
         {
-          "datasource": { "type": "postgres", "uid": "PostgreSQL-QA-Metrics" },
+          "datasource": { "type": "postgres", "uid": "PF5EF0362CC1A9AD6" },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
@@ -332,7 +332,7 @@
       "type": "table"
     }
   ],
-  "refresh": "5s",
+  "refresh": "30s",
   "schemaVersion": 39,
   "tags": ["qa", "automation", "reliability", "testops"],
   "templating": { "list": [] },

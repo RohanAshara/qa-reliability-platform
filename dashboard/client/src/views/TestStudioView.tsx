@@ -25,14 +25,35 @@ import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { GeneratedTest } from '../types';
 
-export const TestStudioView: React.FC = () => {
+interface TestStudioViewProps {
+  onRunTest?: (filename: string) => void;
+}
+
+export const TestStudioView: React.FC<TestStudioViewProps> = ({ onRunTest }) => {
   const [targetUrl, setTargetUrl] = useState<string>('https://www.saucedemo.com');
   const [testName, setTestName] = useState<string>('user_checkout_journey');
   const [generatedFiles, setGeneratedFiles] = useState<GeneratedTest[]>([]);
   const [launchMessage, setLaunchMessage] = useState<string | null>(null);
   const [selectedFileContent, setSelectedFileContent] = useState<{ filename: string; content: string } | null>(null);
+
+  const handleRunFile = async (filename: string) => {
+    if (onRunTest) {
+      onRunTest(filename);
+      return;
+    }
+    try {
+      await fetch('/api/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ suite: 'file', testFile: filename }),
+      });
+    } catch (e: any) {
+      console.error('Failed to run test file:', e);
+    }
+  };
 
   const fetchGenerated = async () => {
     try {
@@ -201,15 +222,43 @@ export const TestStudioView: React.FC = () => {
                       {new Date(file.updatedAt).toLocaleString()}
                     </TableCell>
                     <TableCell align="center">
-                      <Tooltip title="View Recorded Code">
-                        <IconButton
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+                        <Button
                           size="small"
-                          color="primary"
-                          onClick={() => handleViewFile(file.filename)}
+                          variant="contained"
+                          color="success"
+                          startIcon={<PlayArrowIcon />}
+                          onClick={() => handleRunFile(file.filename)}
+                          sx={{
+                            py: 0.35,
+                            px: 1.5,
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            textTransform: 'none',
+                            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                            boxShadow: '0 2px 6px rgba(16, 185, 129, 0.3)',
+                            '&:hover': {
+                              background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                            },
+                          }}
                         >
-                          <VisibilityIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
+                          Run
+                        </Button>
+
+                        <Tooltip title="View Recorded Code">
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            onClick={() => handleViewFile(file.filename)}
+                            sx={{
+                              backgroundColor: 'rgba(56, 189, 248, 0.08)',
+                              '&:hover': { backgroundColor: 'rgba(56, 189, 248, 0.2)' },
+                            }}
+                          >
+                            <VisibilityIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
                     </TableCell>
                   </TableRow>
                 ))}
